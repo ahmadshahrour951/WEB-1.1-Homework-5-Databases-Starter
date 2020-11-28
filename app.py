@@ -37,19 +37,24 @@ def about():
 def create():
     """Display the plant creation page & process data from the creation form."""
     if request.method == 'POST':
-        # TODO: Get the new plant's name, variety, photo, & date planted, and 
-        # store them in the object below.
+        name = request.form.get('plant_name')
+        variety = request.form.get('variety')
+        photo_url = request.form.get('photo')
+        date_planted = request.form.get('date_planted')
+
         new_plant = {
-            'name': '',
-            'variety': '',
-            'photo_url': '',
-            'date_planted': ''
+            'name': name,
+            'variety': variety,
+            'photo_url': photo_url,
+            'date_planted': date_planted
         }
         # TODO: Make an `insert_one` database call to insert the object into the
         # database's `plants` collection, and get its inserted id. Pass the 
         # inserted id into the redirect call below.
 
-        return redirect(url_for('detail', plant_id=''))
+        created_plant = mongo.db.plants.insert_one(new_plant)
+
+        return redirect(url_for('detail', plant_id=str(created_plant.inserted_id)))
 
     else:
         return render_template('create.html')
